@@ -109,7 +109,6 @@
                     <th>Gol</th>
                     <th>Assist</th>
                     <th>Amm / Esp</th>
-                    <th>Azioni</th>
                 </tr>
             </thead>
             <tbody>
@@ -132,10 +131,6 @@
                     <td th:text="${g.ruolo == 'P' ? g.golSubiti : g.golFatti}">0</td>
                     <td th:text="${g.assist}">0</td>
                     <td th:text="${g.ammonizioni + ' / ' + g.espulsioni}">0 / 0</td>
-                    <td>
-                        <a class="btn btn-success btn-sm" th:href="@{/aggiungi-classic(id=${g.id})}">Classic +</a>
-                        <a class="btn btn-warning btn-sm" th:href="@{/aggiungi-mantra(id=${g.id})}">Mantra +</a>
-                    </td>
                 </tr>
             </tbody>
         </table>
