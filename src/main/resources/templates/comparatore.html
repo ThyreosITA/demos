@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comparatore Giocatori</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-dark text-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/">⚽ Fantacalcio 2025/26</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Listone</a>
+                <a class="nav-link" href="/team-builder">Team Builder</a>
+                <a class="nav-link active" href="/comparatore">Comparatore</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4">Comparatore Testa a Testa</h2>
+
+        <!-- Form di selezione -->
+        <form method="get" action="/comparatore" class="row g-3 bg-secondary p-4 rounded mb-4">
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Giocatore 1</label>
+                <select name="id1" class="form-select" required>
+                    <option value="">Seleziona giocatore...</option>
+                    <option th:each="g : ${tuttiGiocatori}" th:value="${g.id}" th:text="${g.nome + ' (' + g.squadra + ' - ' + g.ruoloMantra + ')'}" th:selected="${giocatore1 != null and giocatore1.id == g.id}"></option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Giocatore 2</label>
+                <select name="id2" class="form-select" required>
+                    <option value="">Seleziona giocatore...</option>
+                    <option th:each="g : ${tuttiGiocatori}" th:value="${g.id}" th:text="${g.nome + ' (' + g.squadra + ' - ' + g.ruoloMantra + ')'}" th:selected="${giocatore2 != null and giocatore2.id == g.id}"></option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Compara</button>
+            </div>
+        </form>
+
+        <!-- Tabella Comparativa -->
+        <div class="row" th:if="${giocatore1 != null and giocatore2 != null}">
+            <div class="col-12">
+                <table class="table table-dark table-bordered text-center align-middle">
+                    <thead>
+                        <tr class="table-primary text-dark">
+                            <th style="width: 33%;">Statistica</th>
+                            <th style="width: 33%;" th:text="${giocatore1.nome}">Giocatore 1</th>
+                            <th style="width: 33%;" th:text="${giocatore2.nome}">Giocatore 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">Squadra</td>
+                            <td th:text="${giocatore1.squadra}">-</td>
+                            <td th:text="${giocatore2.squadra}">-</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Ruolo / Mantra</td>
+                            <td><span th:text="${giocatore1.ruolo}"></span> (<span th:text="${giocatore1.ruoloMantra}"></span>)</td>
+                            <td><span th:text="${giocatore2.ruolo}"></span> (<span th:text="${giocatore2.ruoloMantra}"></span>)</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Presenze (PV)</td>
+                            <td th:text="${giocatore1.presenze}">0</td>
+                            <td th:text="${giocatore2.presenze}">0</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Media Voto (MV)</td>
+                            <td th:text="${#numbers.formatDecimal(giocatore1.mediaVoto, 1, 2)}">0</td>
+                            <td th:text="${#numbers.formatDecimal(giocatore2.mediaVoto, 1, 2)}">0</td>
+                        </tr>
+                        <tr class="table-active">
+                            <td class="fw-bold text-warning">FantaMedia (FM)</td>
+                            <td th:class="${giocatore1.fantaMedia > giocatore2.fantaMedia ? 'text-success fw-bold' : ''}" th:text="${#numbers.formatDecimal(giocatore1.fantaMedia, 1, 2)}">0</td>
+                            <td th:class="${giocatore2.fantaMedia > giocatore1.fantaMedia ? 'text-success fw-bold' : ''}" th:text="${#numbers.formatDecimal(giocatore2.fantaMedia, 1, 2)}">0</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Gol Fatti</td>
+                            <td th:text="${giocatore1.golFatti}">0</td>
+                            <td th:text="${giocatore2.golFatti}">0</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Assist</td>
+                            <td th:text="${giocatore1.assist}">0</td>
+                            <td th:text="${giocatore2.assist}">0</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Quotazione Attuale</td>
+                            <td th:text="${giocatore1.quotazioneAttuale}">0</td>
+                            <td th:text="${giocatore2.quotazioneAttuale}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

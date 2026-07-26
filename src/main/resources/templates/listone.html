@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listone Fantacalcio</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+        .container {
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+        .table {
+            background: white;
+        }
+        .btn-sm {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="mb-4">Lista Giocatori</h1>
+
+    <!-- FORM FILTRI E RICERCA -->
+    <form method="get" action="/" class="row g-3 mb-4 bg-white p-3 rounded shadow-sm">
+        <div class="col-md-3">
+            <label class="form-label">Nome</label>
+            <input class="form-control" type="text" name="nome" th:value="${nome}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Ruolo</label>
+            <select class="form-select" name="ruolo">
+                <option value="">Tutti</option>
+                <option value="P" th:selected="${ruolo=='P'}">Portiere</option>
+                <option value="D" th:selected="${ruolo=='D'}">Difensore</option>
+                <option value="C" th:selected="${ruolo=='C'}">Centrocampo</option>
+                <option value="A" th:selected="${ruolo=='A'}">Attaccante</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Squadra</label>
+            <input class="form-control" type="text" name="squadra" th:value="${squadra}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Quot min</label>
+            <input class="form-control" type="number" name="quotMin" th:value="${quotMin}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Quot max</label>
+            <input class="form-control" type="number" name="quotMax" th:value="${quotMax}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">FVM min</label>
+            <input class="form-control" type="number" name="fvmMin" th:value="${fvmMin}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">FVM max</label>
+            <input class="form-control" type="number" name="fvmMax" th:value="${fvmMax}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">FM minima</label>
+            <input class="form-control" type="number" step="0.01" name="fmMin" th:value="${fmMin}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">MV minima</label>
+            <input class="form-control" type="number" step="0.01" name="mvMin" th:value="${mvMin}">
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Cerca</button>
+        </div>
+    </form>
+
+    <!-- TABELLA GIOCATORI -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nome</th>
+                    <th>Squadra</th>
+                    <th>Ruolo</th>
+                    <th>Mantra</th>
+                    <th>Quotazione</th>
+                    <th>FVM</th>
+                    <th>PG</th>
+                    <th>MV</th>
+                    <th>FM</th>
+                    <th>Gol</th>
+                    <th>Assist</th>
+                    <th>Amm / Esp</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="g : ${giocatori}">
+                    <td th:text="${g.nome}">Nome</td>
+                    <td th:text="${g.squadra}">Squadra</td>
+                    <td th:text="${g.ruolo}">Ruolo</td>
+                    <td th:text="${g.ruoloMantra}">Mantra</td>
+                    <td>
+                        <span th:if="${g.quotazioneClassic != null}" th:text="${g.quotazioneClassic}">-</span>
+                        <span th:if="${g.quotazioneClassic == null}">-</span>
+                    </td>
+                    <td>
+                        <span th:if="${g.fvmClassic != null}" th:text="${g.fvmClassic}">-</span>
+                        <span th:if="${g.fvmClassic == null}">-</span>
+                    </td>
+                    <td th:text="${g.presenze}">0</td>
+                    <td th:text="${g.mediaVoto}">0.0</td>
+                    <td th:text="${g.fantaMedia}">0.0</td>
+                    <td th:text="${g.ruolo == 'P' ? g.golSubiti : g.golFatti}">0</td>
+                    <td th:text="${g.assist}">0</td>
+                    <td th:text="${g.ammonizioni + ' / ' + g.espulsioni}">0 / 0</td>
+                    <td>
+                        <a class="btn btn-success btn-sm" th:href="@{/aggiungi-classic(id=${g.id})}">Classic +</a>
+                        <a class="btn btn-warning btn-sm" th:href="@{/aggiungi-mantra(id=${g.id})}">Mantra +</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- LINK E PULSANTI DI NAVIGAZIONE -->
+    <div class="mt-4">
+        <a href="/team-builder" class="btn btn-secondary">Vai alla rosa</a>
+        <a href="/importa-quotazioni" class="btn btn-info">Importa quotazioni</a>
+    </div>
+
+</div>
+
+</body>
+</html>

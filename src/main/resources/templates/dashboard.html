@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Serie A & Fantacalcio Analytics 2025/26</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white min-h-screen p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- 1. NAVBAR CON I 3 TASTI -->
+        <nav class="flex justify-between items-center bg-slate-800 p-4 rounded-xl mb-6 shadow-lg border border-slate-700">
+            <h1 class="text-2xl font-extrabold text-indigo-400">⚽ Serie A Analytics</h1>
+            <div class="flex gap-3">
+                <a href="/" class="bg-indigo-600 px-4 py-2 rounded-lg font-semibold text-sm">
+                    <i class="fa-solid fa-chart-simple mr-1"></i> Confronto
+                </a>
+                <a href="/team-builder" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-semibold transition text-sm">
+                    <i class="fa-solid fa-users mr-1"></i> Team Builder
+                </a>
+                <a href="/listone" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-semibold transition text-sm">
+                    <i class="fa-solid fa-list mr-1"></i> Listone
+                </a>
+            </div>
+        </nav>
+
+        <!-- Selettore Giocatori -->
+        <form method="get" action="/" class="bg-slate-800 p-6 rounded-xl shadow-lg mb-8 flex flex-wrap gap-4 items-center justify-between border border-slate-700">
+            <div class="flex-1 min-w-[250px]">
+                <label class="block text-sm font-medium mb-1 text-indigo-300">Giocatore 1</label>
+                <select name="g1" class="w-full bg-slate-700 text-white p-2.5 rounded-lg border border-slate-600 focus:ring-2 focus:ring-indigo-500">
+                    <option th:each="g : ${giocatori}" 
+                            th:value="${g.id}" 
+                            th:text="${g.nome + ' (' + g.squadra + ' - ' + g.ruolo + ')'}" 
+                            th:selected="${g1 != null and g.id == g1.id}"></option>
+                </select>
+            </div>
+
+            <div class="text-2xl font-bold text-indigo-500">VS</div>
+
+            <div class="flex-1 min-w-[250px]">
+                <label class="block text-sm font-medium mb-1 text-pink-300">Giocatore 2</label>
+                <select name="g2" class="w-full bg-slate-700 text-white p-2.5 rounded-lg border border-slate-600 focus:ring-2 focus:ring-pink-500">
+                    <option th:each="g : ${giocatori}" 
+                            th:value="${g.id}" 
+                            th:text="${g.nome + ' (' + g.squadra + ' - ' + g.ruolo + ')'}" 
+                            th:selected="${g2 != null and g.id == g2.id}"></option>
+                </select>
+            </div>
+
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2.5 rounded-lg transition">Confronta</button>
+        </form>
+
+        <!-- Griglia Statistiche -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" th:if="${g1 != null and g2 != null}">
+            <!-- Card Giocatore 1 -->
+            <div class="bg-slate-800 p-6 rounded-xl border-l-4 border-indigo-500 shadow-xl border border-slate-700">
+                <!-- 2. NOME CLICCABILE PER APRIRE LA BIO -->
+                <button th:onclick="'openBioModal(' + ${g1.id} + ')'" class="text-2xl font-bold text-indigo-300 hover:underline text-left mb-1 flex items-center gap-2">
+                    <span th:text="${g1.nome}">-</span>
+                    <i class="fa-solid fa-circle-info text-sm text-slate-400 hover:text-indigo-300"></i>
+                </button>
+                <p class="text-slate-400 font-semibold mb-4" th:text="${g1.squadra + ' | Ruolo: ' + g1.ruolo + ' (Mantra: ' + g1.ruoloMantra + ')'}">-</p>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Presenze (Pv):</span> <strong th:text="${g1.presenze}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Media Voto (MV):</span> <strong class="text-sky-300" th:text="${#numbers.formatDecimal(g1.mediaVoto, 1, 2)}">0.00</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>FantaMedia (FM):</span> <strong class="text-emerald-400" th:text="${#numbers.formatDecimal(g1.fantaMedia, 1, 2)}">0.00</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Gol Fatti / Subiti:</span> <strong><span class="text-emerald-400" th:text="${g1.golFatti}">0</span> / <span class="text-rose-400" th:text="${g1.golSubiti}">0</span></strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Assist:</span> <strong class="text-indigo-300" th:text="${g1.assist}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Gol + Assist:</span> <strong class="text-yellow-400" th:text="${g1.golPlusAssist}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Rigori Segnati / Sbagliati:</span> <strong><span class="text-emerald-400" th:text="${g1.rigoriSegnati}">0</span> / <span class="text-rose-400" th:text="${g1.rigoriSbagliati}">0</span></strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Cartellini (Amm / Esp):</span> <strong><span class="text-yellow-400" th:text="${g1.ammonizioni}">0</span> / <span class="text-rose-500" th:text="${g1.espulsioni}">0</span></strong></div>
+                    <hr class="border-slate-700 my-2">
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Quotazione Attuale (Qt.A):</span> <strong class="text-indigo-300" th:text="${g1.quotazioneAttuale}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>FantaValore Mercato (FVM):</span> <strong class="text-yellow-400" th:text="${g1.fantaValoreMercato}">0</strong></div>
+                </div>
+            </div>
+
+            <!-- Radar Chart -->
+            <div class="bg-slate-800 p-6 rounded-xl shadow-xl flex flex-col justify-center items-center border border-slate-700">
+                <h3 class="text-lg font-bold mb-4 text-slate-300">Confronto Statistico</h3>
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <!-- Card Giocatore 2 -->
+            <div class="bg-slate-800 p-6 rounded-xl border-l-4 border-pink-500 shadow-xl border border-slate-700">
+                <!-- NOME CLICCABILE PER APRIRE LA BIO -->
+                <button th:onclick="'openBioModal(' + ${g2.id} + ')'" class="text-2xl font-bold text-pink-300 hover:underline text-left mb-1 flex items-center gap-2">
+                    <span th:text="${g2.nome}">-</span>
+                    <i class="fa-solid fa-circle-info text-sm text-slate-400 hover:text-pink-300"></i>
+                </button>
+                <p class="text-slate-400 font-semibold mb-4" th:text="${g2.squadra + ' | Ruolo: ' + g2.ruolo + ' (Mantra: ' + g2.ruoloMantra + ')'}">-</p>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Presenze (Pv):</span> <strong th:text="${g2.presenze}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Media Voto (MV):</span> <strong class="text-sky-300" th:text="${#numbers.formatDecimal(g2.mediaVoto, 1, 2)}">0.00</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>FantaMedia (FM):</span> <strong class="text-emerald-400" th:text="${#numbers.formatDecimal(g2.fantaMedia, 1, 2)}">0.00</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Gol Fatti / Subiti:</span> <strong><span class="text-emerald-400" th:text="${g2.golFatti}">0</span> / <span class="text-rose-400" th:text="${g2.golSubiti}">0</span></strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Assist:</span> <strong class="text-pink-300" th:text="${g2.assist}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Gol + Assist:</span> <strong class="text-yellow-400" th:text="${g2.golPlusAssist}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Rigori Segnati / Sbagliati:</span> <strong><span class="text-emerald-400" th:text="${g2.rigoriSegnati}">0</span> / <span class="text-rose-400" th:text="${g2.rigoriSbagliati}">0</span></strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Cartellini (Amm / Esp):</span> <strong><span class="text-yellow-400" th:text="${g2.ammonizioni}">0</span> / <span class="text-rose-500" th:text="${g2.espulsioni}">0</span></strong></div>
+                    <hr class="border-slate-700 my-2">
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>Quotazione Attuale (Qt.A):</span> <strong class="text-pink-300" th:text="${g2.quotazioneAttuale}">0</strong></div>
+                    <div class="p-2 bg-slate-700/50 rounded flex justify-between"><span>FantaValore Mercato (FVM):</span> <strong class="text-yellow-400" th:text="${g2.fantaValoreMercato}">0</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. STRUTTURA HTML DEL MODAL BIO -->
+    <div id="bioModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-lg w-full shadow-2xl relative">
+            <button onclick="closeBioModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+            <div id="bioContent">
+                <p class="text-center text-slate-400 py-8">Caricamento...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT JS (CHART.JS + LOGICA DEL MODAL BIO) -->
+    <script th:inline="javascript">
+        const g1 = /*[[${g1}]]*/ {};
+        const g2 = /*[[${g2}]]*/ {};
+
+        if (g1 && g2) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['FantaMedia (x10)', 'Media Voto (x10)', 'Gol Fatti (x5)', 'Assist (x5)', 'Quotazione (Qt.A)'],
+                    datasets: [{
+                        label: g1.nome,
+                        data: [g1.fantaMedia * 10, g1.mediaVoto * 10, g1.golFatti * 5, g1.assist * 5, g1.quotazioneAttuale],
+                        fill: true,
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderColor: 'rgb(99, 102, 241)',
+                        pointBackgroundColor: 'rgb(99, 102, 241)'
+                    }, {
+                        label: g2.nome,
+                        data: [g2.fantaMedia * 10, g2.mediaVoto * 10, g2.golFatti * 5, g2.assist * 5, g2.quotazioneAttuale],
+                        fill: true,
+                        backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                        borderColor: 'rgb(236, 72, 153)',
+                        pointBackgroundColor: 'rgb(236, 72, 153)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#cbd5e1' },
+                            ticks: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funzioni per gestire il Modal Bio
+        function openBioModal(id) {
+            const modal = document.getElementById('bioModal');
+            const content = document.getElementById('bioContent');
+            modal.classList.remove('hidden');
+            content.innerHTML = '<p class="text-center text-slate-400 py-8"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Caricamento in corso...</p>';
+
+            fetch('/api/giocatori/' + id)
+                .then(res => res.json())
+                .then(g => {
+                    content.innerHTML = `
+                        <div class="text-center mb-6">
+                            <span class="inline-block bg-indigo-600/30 text-indigo-300 font-semibold px-3 py-1 rounded-full text-xs uppercase tracking-wider mb-2">${g.squadra} • ${g.ruolo} (${g.ruoloMantra})</span>
+                            <h2 class="text-3xl font-extrabold text-white">${g.nome}</h2>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Presenze (Pv):</span><strong class="text-white">${g.presenze}</strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Media Voto (MV):</span><strong class="text-sky-300">${(g.mediaVoto || 0).toFixed(2)}</strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>FantaMedia (FM):</span><strong class="text-emerald-400">${(g.fantaMedia || 0).toFixed(2)}</strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Gol Fatti / Subiti:</span><strong><span class="text-emerald-400">${g.golFatti}</span> / <span class="text-rose-400">${g.golSubiti}</span></strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Assist:</span><strong class="text-indigo-300">${g.assist}</strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Gol + Assist:</span><strong class="text-yellow-400">${(g.golFatti || 0) + (g.assist || 0)}</strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Rigori Segnati / Sbagliati:</span><strong><span class="text-emerald-400">${g.rigoriSegnati}</span> / <span class="text-rose-400">${g.rigoriSbagliati}</span></strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between"><span>Cartellini (Amm / Esp):</span><strong><span class="text-yellow-400">${g.ammonizioni}</span> / <span class="text-rose-500">${g.espulsioni}</span></strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between col-span-2"><span>Quotazione Attuale (Qt.A):</span><strong class="text-indigo-300">${g.quotazioneAttuale}</strong></div>
+                            <div class="bg-slate-700/50 p-2.5 rounded-lg flex justify-between col-span-2"><span>FantaValore Mercato (FVM):</span><strong class="text-yellow-400">${g.fantaValoreMercato}</strong></div>
+                        </div>
+                    `;
+                })
+                .catch(() => {
+                    content.innerHTML = '<p class="text-center text-rose-400 py-4">Errore nel recupero delle statistiche.</p>';
+                });
+        }
+
+        function closeBioModal() {
+            document.getElementById('bioModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
