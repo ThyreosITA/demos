@@ -25,7 +25,14 @@
 
 <div class="container">
 
-    <h1 class="mb-4">Lista Giocatori</h1>
+    <!-- Intestazione con Titolo e Pulsanti in alto a destra -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="m-0">Lista Giocatori</h1>
+        <div>
+            <a href="/team-builder" class="btn btn-secondary">Vai alla rosa</a>
+            <a href="/importa-quotazioni" class="btn btn-info">Importa quotazioni</a>
+        </div>
+    </div>
 
     <!-- FORM FILTRI E RICERCA -->
     <form method="get" action="/" class="row g-3 mb-4 bg-white p-3 rounded shadow-sm">
@@ -132,12 +139,6 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-
-    <!-- LINK E PULSANTI DI NAVIGAZIONE -->
-    <div class="mt-4">
-        <a href="/team-builder" class="btn btn-secondary">Vai alla rosa</a>
-        <a href="/importa-quotazioni" class="btn btn-info">Importa quotazioni</a>
     </div>
 
 </div>
