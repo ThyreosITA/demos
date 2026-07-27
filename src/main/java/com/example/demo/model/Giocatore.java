@@ -12,25 +12,46 @@ public class Giocatore {
 
     private String nome;
     private String squadra;
-    private String ruolo;        // Ruolo Classic (P, D, C, A)
-    private String ruoloMantra;  // Ruolo Mantra (Por, Dc, E, W, T, Pc, ecc.)
+    private String ruolo;
+    private String ruoloMantra;
 
     private Integer quotazioneClassic;
-    private Integer quotazioneMantra;
     private Integer fvmClassic;
+    private Integer quotazioneMantra;
     private Integer fvmMantra;
 
-    // Statistiche di Rendimento
-    private Double mediaVoto = 0.0;
-    private Double fantaMedia = 0.0;
-    private Integer presenze = 0;
-    private Integer golFatti = 0;
-    private Integer golSubiti = 0;
-    private Integer assist = 0;
-    private Integer ammonizioni = 0;
-    private Integer espulsioni = 0;
+    private Integer presenze;
+    private Double mediaVoto;
+    private Double fantaMedia;
+    private Integer golFatti;
+    private Integer golSubiti;
+    private Integer assist;
+    private Integer ammonizioni;
+    private Integer espulsioni;
 
     public Giocatore() {}
+
+    // Calcolo dell'Indice Efficienza Giocatore (IEG)
+    public double getIndiceEfficienzaGiocatore() {
+        double gol = golFatti != null ? golFatti : 0.0;
+        double ast = assist != null ? assist : 0.0;
+        double mv = mediaVoto != null ? mediaVoto : 0.0;
+        double amm = ammonizioni != null ? ammonizioni : 0.0;
+        double esp = espulsioni != null ? espulsioni : 0.0;
+
+        return (gol * 3) + (ast * 2) + (mv * 1.5) - (amm * 1) - (esp * 2);
+    }
+
+    // Calcolo dell'Indice Modificatore Difesa (IMD) - Media Voto peso 4.5
+    public double getIndiceModificatoreDifesa() {
+        double gol = golFatti != null ? golFatti : 0.0;
+        double ast = assist != null ? assist : 0.0;
+        double mv = mediaVoto != null ? mediaVoto : 0.0;
+        double amm = ammonizioni != null ? ammonizioni : 0.0;
+        double esp = espulsioni != null ? espulsioni : 0.0;
+
+        return (mv * 9.5) + (gol * 0.5) + (ast * 0.25) - (amm * 0.25) - (esp * 0.5);
+    }
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -51,23 +72,23 @@ public class Giocatore {
     public Integer getQuotazioneClassic() { return quotazioneClassic; }
     public void setQuotazioneClassic(Integer quotazioneClassic) { this.quotazioneClassic = quotazioneClassic; }
 
-    public Integer getQuotazioneMantra() { return quotazioneMantra; }
-    public void setQuotazioneMantra(Integer quotazioneMantra) { this.quotazioneMantra = quotazioneMantra; }
-
     public Integer getFvmClassic() { return fvmClassic; }
     public void setFvmClassic(Integer fvmClassic) { this.fvmClassic = fvmClassic; }
 
+    public Integer getQuotazioneMantra() { return quotazioneMantra; }
+    public void setQuotazioneMantra(Integer quotazioneMantra) { this.quotazioneMantra = quotazioneMantra; }
+
     public Integer getFvmMantra() { return fvmMantra; }
     public void setFvmMantra(Integer fvmMantra) { this.fvmMantra = fvmMantra; }
+
+    public Integer getPresenze() { return presenze; }
+    public void setPresenze(Integer presenze) { this.presenze = presenze; }
 
     public Double getMediaVoto() { return mediaVoto; }
     public void setMediaVoto(Double mediaVoto) { this.mediaVoto = mediaVoto; }
 
     public Double getFantaMedia() { return fantaMedia; }
     public void setFantaMedia(Double fantaMedia) { this.fantaMedia = fantaMedia; }
-
-    public Integer getPresenze() { return presenze; }
-    public void setPresenze(Integer presenze) { this.presenze = presenze; }
 
     public Integer getGolFatti() { return golFatti; }
     public void setGolFatti(Integer golFatti) { this.golFatti = golFatti; }

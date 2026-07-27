@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Listone Fantacalcio</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background: #f5f5f5;
-        }
-        .container {
-            margin-top: 30px;
-            margin-bottom: 50px;
-        }
-        .table {
-            background: white;
-        }
-        .btn-sm {
-            margin: 2px;
+        body { background: #f5f5f5; }
+        .container { margin-top: 30px; margin-bottom: 50px; }
+        .table { background: white; }
+        .info-box {
+            background: #e7f1ff;
+            border-left: 4px solid #0d6efd;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 0.95rem;
         }
     </style>
 </head>
@@ -25,7 +22,6 @@
 
 <div class="container">
 
-    <!-- Intestazione con Titolo e Pulsanti in alto a destra -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="m-0">Lista Giocatori</h1>
         <div>
@@ -34,7 +30,17 @@
         </div>
     </div>
 
-    <!-- FORM FILTRI E RICERCA -->
+    <!-- DESCRIZIONE DEGLI INDICI -->
+    <div class="info-box shadow-sm">
+        <strong>Per far apparire il listone, cliccare su "Importa Quotazioni" e attendere.</strong>
+    </div>    
+    <div class="info-box shadow-sm">
+        <strong>GUIDA AI NUOVISSIMI INDICI</strong><br>
+        <strong>IEG (Indice Efficienza Giocatore):</strong> indice globale pensato per valutare l'efficienza complessiva e la "brillantezza" di un giocatore nel corso della stagione. Dà molta importanza ai bonus pesanti e premia chi è decisivo sottoporta, tenendo comunque conto di Media Voto e Malus.<br>
+        <strong>IMD (Indice Modificatore Difesa):</strong> strumento perfetto per individuare i migliori difensori "da modificatore", capaci di garantire voti alti e costanti (es. 6.5 o 7) tenendo conto (anche se in maniere notevolmente ridotta) di Bonus e Malus.
+    </div>
+
+    <!-- FORM FILTRI -->
     <form method="get" action="/" class="row g-3 mb-4 bg-white p-3 rounded shadow-sm">
         <div class="col-md-3">
             <label class="form-label">Nome</label>
@@ -87,6 +93,32 @@
             <input class="form-control" type="number" step="0.01" name="mvMin" th:value="${mvMin}">
         </div>
 
+        <!-- SELETTORE PER ORDINAMENTO -->
+        <div class="col-md-2">
+            <label class="form-label">Ordina per</label>
+            <select class="form-select" name="sortBy">
+                <option value="fantaMedia" th:selected="${sortBy == 'fantaMedia'}">FantaMedia</option>
+                <option value="ieg" th:selected="${sortBy == 'ieg'}">Indice Efficienza (IEG)</option>
+                <option value="imd" th:selected="${sortBy == 'imd'}">Modificatore Difesa (IMD)</option>
+                <option value="nome" th:selected="${sortBy == 'nome'}">Nome</option>
+                <option value="squadra" th:selected="${sortBy == 'squadra'}">Squadra</option>
+                <option value="quotazioneClassic" th:selected="${sortBy == 'quotazioneClassic'}">Quotazione</option>
+                <option value="fvmClassic" th:selected="${sortBy == 'fvmClassic'}">FVM</option>
+                <option value="mediaVoto" th:selected="${sortBy == 'mediaVoto'}">Media Voto</option>
+                <option value="golFatti" th:selected="${sortBy == 'golFatti'}">Gol</option>
+                <option value="assist" th:selected="${sortBy == 'assist'}">Assist</option>
+            </select>
+        </div>
+
+        <!-- DIREZIONE ORDINAMENTO -->
+        <div class="col-md-2">
+            <label class="form-label">Direzione</label>
+            <select class="form-select" name="sortDir">
+                <option value="desc" th:selected="${sortDir == 'desc'}">Decrescente</option>
+                <option value="asc" th:selected="${sortDir == 'asc'}">Crescente</option>
+            </select>
+        </div>
+
         <div class="col-md-2 d-flex align-items-end">
             <button type="submit" class="btn btn-primary w-100">Cerca</button>
         </div>
@@ -109,6 +141,8 @@
                     <th>Gol</th>
                     <th>Assist</th>
                     <th>Amm / Esp</th>
+                    <th class="bg-primary text-white">IEG</th>
+                    <th class="bg-success text-white">IMD</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,6 +165,8 @@
                     <td th:text="${g.ruolo == 'P' ? g.golSubiti : g.golFatti}">0</td>
                     <td th:text="${g.assist}">0</td>
                     <td th:text="${g.ammonizioni + ' / ' + g.espulsioni}">0 / 0</td>
+                    <td class="fw-bold text-primary" th:text="${#numbers.formatDecimal(g.indiceEfficienzaGiocatore, 1, 2)}">0.00</td>
+                    <td class="fw-bold text-success" th:text="${#numbers.formatDecimal(g.indiceModificatoreDifesa, 1, 2)}">0.00</td>
                 </tr>
             </tbody>
         </table>

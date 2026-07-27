@@ -84,18 +84,21 @@ public class GiocatoreController {
                         "fantaMedia",
                         "mediaVoto",
                         "golFatti",
-                        "assist"
+                        "assist",
+                        "ieg",
+                        "imd"
                 );
 
         if(!validSort.contains(sortBy))
             sortBy="fantaMedia";
 
-        Sort sort;
-
-        if(sortDir.equalsIgnoreCase("asc"))
-            sort=Sort.by(sortBy).ascending();
-        else
-            sort=Sort.by(sortBy).descending();
+        Sort sort = Sort.unsorted();
+        if (!sortBy.equals("ieg") && !sortBy.equals("imd")) {
+            if(sortDir.equalsIgnoreCase("asc"))
+                sort=Sort.by(sortBy).ascending();
+            else
+                sort=Sort.by(sortBy).descending();
+        }
 
         List<Giocatore> giocatori =
                 giocatoreRepository.findAll(
@@ -114,11 +117,29 @@ public class GiocatoreController {
                         sort
                 );
 
+        if (sortBy.equals("ieg")) {
+            giocatori.sort((g1, g2) -> {
+                int cmp = Double.compare(g1.getIndiceEfficienzaGiocatore(), g2.getIndiceEfficienzaGiocatore());
+                return sortDir.equalsIgnoreCase("asc") ? cmp : -cmp;
+            });
+        } else if (sortBy.equals("imd")) {
+            giocatori.sort((g1, g2) -> {
+                int cmp = Double.compare(g1.getIndiceModificatoreDifesa(), g2.getIndiceModificatoreDifesa());
+                return sortDir.equalsIgnoreCase("asc") ? cmp : -cmp;
+            });
+        }
+
         model.addAttribute("giocatori", giocatori);
         model.addAttribute("nome", nome);
         model.addAttribute("ruolo", ruolo);
         model.addAttribute("ruoloMantra", ruoloMantra);
         model.addAttribute("squadra", squadra);
+        model.addAttribute("quotMin", quotMin);
+        model.addAttribute("quotMax", quotMax);
+        model.addAttribute("fvmMin", fvmMin);
+        model.addAttribute("fvmMax", fvmMax);
+        model.addAttribute("fmMin", fmMin);
+        model.addAttribute("mvMin", mvMin);
 
         model.addAttribute(
                 "reverseSortDir",
@@ -126,6 +147,7 @@ public class GiocatoreController {
         );
 
         model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
 
         return "listone";
     }
@@ -281,6 +303,7 @@ public class GiocatoreController {
                         "rosaMantra"
                 );
 
+        model.addAttribute("rosaClusterClassic", classic);
         model.addAttribute("rosaClassic", classic);
         model.addAttribute("rosaMantra", mantra);
         model.addAttribute("selectedModule", module);
